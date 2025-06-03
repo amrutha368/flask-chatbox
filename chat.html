@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat with Flask Bot</title>
+    <style>
+        .user { color: blue; }
+        .bot { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Chat with Flask Bot</h1>
+    <div id="chat-box"></div>
+    <input type="text" id="user-input" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value;
+            input.value = '';
+
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML += `<p><span class="user">user:</span> ${message}</p>`;
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message })
+                });
+
+                const data = await response.json();
+                chatBox.innerHTML += `<p><span class="bot">bot:</span> ${data.response}</p>`;
+            } catch (error) {
+                chatBox.innerHTML += `<p><span class="bot">bot:</span> Error: Could not reach server</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
